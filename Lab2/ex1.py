@@ -140,17 +140,15 @@ def evaluate_dataset():
             total_images += 1
 
             gt_skin = (gt == 255)
-            gt_nonskin = (gt == 0)
 
             for method_name, method_fn in methods.items():
                 pred = method_fn(img)
                 pred_skin = (pred == 255)
-                pred_nonskin = (pred == 0)
 
                 tp = np.sum(gt_skin & pred_skin)
-                fn = np.sum(gt_skin & pred_nonskin)
-                fp = np.sum(gt_nonskin & pred_skin)
-                tn = np.sum(gt_nonskin & pred_nonskin)
+                fn = np.sum(gt_skin & ~pred_skin)
+                fp = np.sum(~gt_skin & pred_skin)
+                tn = np.sum(~gt_skin & ~pred_skin)
 
                 confusion_matrices[method_name]["TP"] += int(tp)
                 confusion_matrices[method_name]["FN"] += int(fn)
